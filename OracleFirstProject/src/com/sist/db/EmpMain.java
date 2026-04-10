@@ -1,5 +1,19 @@
 package com.sist.db;
 import java.sql.*;
+/*
+ *     1. 메서드
+ *     2. 제어문
+ *     3. 클래스 => 변수 / 메서드 / 생성자
+ *     4. 캡슐화
+ *     5. 추상 클래스 / 인터페이스(**)
+ *     6. 예외처리
+ *     --------------------------------
+ *     7. 라이브러리
+ *        => String / Collection (List,Map)
+ *        => IO
+ *        => 형식 (문법)
+ *        => 사용처
+ */
 import java.util.*;
 public class EmpMain {
 
