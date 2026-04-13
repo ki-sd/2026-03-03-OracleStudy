@@ -5,7 +5,7 @@
 <br>
 <br>
 
-* **Progress** : <img src="https://img.shields.io/badge/Progress-5%25-red?style=flat-square" style="vertical-align: middle;">
+* **Progress** : <img src="https://img.shields.io/badge/Progress-10%25-red?style=flat-square" style="vertical-align: middle;">
 * **Language** : <img src="https://img.shields.io/badge/Java_21-ED8B00?style=flat-square&logo=openjdk&logoColor=white" style="vertical-align: middle;">
 * **DataBase** : <img src="https://img.shields.io/badge/Oracle_21c-F80000?style=flat-square&logo=oracle&logoColor=white" style="vertical-align: middle;">
 * **IDE** : <img src="https://img.shields.io/badge/Eclipse-2C2255?style=flat-square&logo=eclipseide&logoColor=white" style="vertical-align: middle;"> <img src="https://img.shields.io/badge/SQL_Developer-F80000?style=flat-square&logo=oracle&logoColor=white" style="vertical-align: middle;"> <img src="https://img.shields.io/badge/DBeaver-382923?style=flat-square&logo=dbeaver&logoColor=white" style="vertical-align: middle;">
