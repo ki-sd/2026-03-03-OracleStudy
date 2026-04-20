@@ -137,6 +137,7 @@
 			  => 컬럼 데이터형 CHECK(컬럼명,IN(값1,값2,...))
 			  => 컬럼 데이터형,
 			     CONSTRAINT 제약조건명 CHECK(컬럼명,IN(값1,값2,...))
+			     CONSTRAINT 제약조건명 CHECK(조건) => ex) 컬럼명>0
 			PRIMARY KEY
 			  => 컬럼 데이터형 PRIMARY KEY
 			  => 컬럼 데이터형,
