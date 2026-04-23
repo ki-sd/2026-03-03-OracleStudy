@@ -35,6 +35,7 @@ public class UserMainForm extends JFrame implements ActionListener{
 		}
 		else if(e.getSource()==mp.b5) {   // 사내 게시판
 			cp.card.show(cp, "BLIST");
+			cp.bList.print();
 		}
 	}
 
