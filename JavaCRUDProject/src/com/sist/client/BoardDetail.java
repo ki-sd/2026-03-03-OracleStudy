@@ -15,45 +15,46 @@ public class BoardDetail extends JPanel implements ActionListener{
      JButton b1,b2,b3; // 수정 / 삭제 / 목록 
      UserMainForm mf;
      public  BoardDetail(UserMainForm mf) {	
+    	this.mf=mf;
         titleLa=new JLabel("게시판",JLabel.CENTER);// <table>
      	titleLa.setFont(new Font("맑은 고딕",Font.BOLD,30)); //<h3></h3>
      	setLayout(null);
-    	titleLa.setBounds(10, 15, 620, 50);
+    	titleLa.setBounds(180, 15, 620, 50);
     	add(titleLa);
     	 
     	noLa=new JLabel("번호",JLabel.CENTER);
-    	noLa.setBounds(10, 75 , 80, 30);
+    	noLa.setBounds(180, 75 , 80, 30);
     	no=new JLabel("",JLabel.CENTER);
-    	no.setBounds(95, 75, 120, 30);
+    	no.setBounds(265, 75, 120, 30);
     	add(noLa);add(no);
     	 
     	dayLa=new JLabel("작성일",JLabel.CENTER);
-    	dayLa.setBounds(220, 75 , 80, 30);
+    	dayLa.setBounds(390, 75 , 80, 30);
     	day=new JLabel("",JLabel.CENTER);
-    	day.setBounds(305, 75, 200, 30);
+    	day.setBounds(475, 75, 200, 30);
     	add(dayLa);add(day);
     	 
     	nameLa=new JLabel("이름",JLabel.CENTER);
-    	nameLa.setBounds(10, 110 , 80, 30);
+    	nameLa.setBounds(180, 110 , 80, 30);
     	name=new JLabel("",JLabel.CENTER);
-    	name.setBounds(95, 110, 120, 30);
+    	name.setBounds(265, 110, 120, 30);
     	add(nameLa);add(name);
     	 
     	hitLa=new JLabel("조회수",JLabel.CENTER);
-    	hitLa.setBounds(220, 110 , 80, 30);
+    	hitLa.setBounds(390, 110 , 80, 30);
     	hit=new JLabel("",JLabel.CENTER);
-    	hit.setBounds(305, 110, 200, 30);
+    	hit.setBounds(475, 110, 200, 30);
     	add(hitLa);add(hit);
     	 
     	subLa=new JLabel("제목",JLabel.CENTER);
-    	subLa.setBounds(10, 145 , 80, 30);
+    	subLa.setBounds(180, 145 , 80, 30);
     	sub=new JLabel("");
-    	sub.setBounds(95, 145, 400, 30);
+    	sub.setBounds(265, 145, 400, 30);
     	add(subLa);add(sub);
     	 
     	ta=new JTextArea();
     	ta.setEditable(false); // 비활성화 
-    	ta.setBounds(10, 180, 485, 250);
+    	ta.setBounds(180, 180, 485, 250);
     	add(ta);
     	 
     	JPanel p=new JPanel();
@@ -61,10 +62,11 @@ public class BoardDetail extends JPanel implements ActionListener{
     	b2=new JButton("삭제");
     	b3=new JButton("목록");
     	p.add(b1);p.add(b2);p.add(b3);
-    	p.setBounds(10, 440, 485, 35);
+    	p.setBounds(180, 440, 485, 35);
     	add(p);
     	 
     	b3.addActionListener(this);
+    	b2.addActionListener(this);
      }
      public void print(int num) {
        	BoardDAO dao=BoardDAO.newInstance();
@@ -83,6 +85,11 @@ public class BoardDetail extends JPanel implements ActionListener{
 		{
 			mf.cp.card.show(mf.cp, "BLIST");
 			mf.cp.bList.print();
+		}
+		else if(e.getSource()==b2)
+		{
+			mf.cp.bDelete.pf.setText("");
+			mf.cp.card.show(mf.cp, "BDELETE");
 		}
 	}
 }

@@ -157,6 +157,39 @@ public class BoardDAO {
 		   }
 		   return vo;
 	   }
+	// 수정
+	// 삭제
+	public boolean board_delete(int no,String pwd) {
+		boolean bCheck=false; // => 비번 일치 여부
+		try {
+			// 연결
+			conn=db.getConnection();
+			// SQL 전송
+			String sql="SELECT pwd FROM board "
+					+"WHERE no=?";
+			ps=conn.prepareStatement(sql);
+			// ?에 값 채우기
+			ps.setInt(1, no);
+			ResultSet rs=ps.executeQuery();
+			rs.next();
+			String db_pwd=rs.getString(1);
+			rs.close();
+			
+			if(db_pwd.equals(pwd)) {      // 본인
+				bCheck=true;
+				sql="DELETE FROM board "
+					+"WHERE no=?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, no);
+				ps.executeUpdate();
+			}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			db.disConnection(conn, ps);
+		}
+		return bCheck;
+	}
 //	public static void main(String[] args) {
 //		BoardDAO dao=BoardDAO.newInstance();
 //		List<BoardVO> list=dao.board_list(1);
