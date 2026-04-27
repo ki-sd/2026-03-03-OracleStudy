@@ -8,6 +8,7 @@ import javax.swing.table.*;
 
 import com.sist.dao.*;
 import com.sist.vo.*;
+
 public class MusicMain extends JFrame
 implements ActionListener
 {
@@ -16,9 +17,10 @@ implements ActionListener
     DefaultTableModel model;
     TableColumn column;
    
-    JButton[] btns=new JButton[6];
-    MovieDAO dao=new MovieDAO();
-    String[] bTitle={"가요","POP","OST","트롯","JAZZ","CLASSIC"};
+    JButton[] btns=new JButton[7];
+    MusicDAO dao=new MusicDAO();
+    // DAO => 한개 테이블만 담당 
+    String[] bTitle={"Top 200","가요","POP","OST","트롯","JAZZ","CLASSIC"};
     public MusicMain()
     {
     	
@@ -84,6 +86,8 @@ implements ActionListener
     	{
     		btns[i]=new JButton(bTitle[i]);
     		p.add(btns[i]);
+    		
+    		btns[i].addActionListener(this);
     	}
     	
     	p.setBounds(10, 70, 800, 35);
@@ -92,25 +96,50 @@ implements ActionListener
     	setSize(850, 700);
     	setVisible(true);
     	setDefaultCloseOperation(EXIT_ON_CLOSE);
-    	
+    	print(1);
     	
     }
-    public void print(String col,String fd)
+    public void print(int cno)
     {
     	for(int i=model.getRowCount()-1;i>=0;i--)
     	{
     		model.removeRow(i);
     	}
     	// 데이터 읽기 
-    	List<MovieVO> list=dao.movieFindData(col, fd);
-    	for(MovieVO vo:list)
+    	List<MusicVO> list=dao.musicListData(cno);
+    	String id="";
+    	for(MusicVO vo:list)
     	{
+    		if(vo.getState().equals("하강"))
+    		{
+    			id="<html>"
+    			  +"<body>"
+    			  +"<font color=blue>▼ "+vo.getIdcrement()+"</font>"
+    			  +"</body>"
+    			  +"<html>";
+    		}
+    		else if(vo.getState().equals("상승"))
+    		{
+    			id="<html>"
+    	    	   +"<body>"
+    	    	   +"<font color=red>▲ "+vo.getIdcrement()+"</font>"
+    	    	   +"</body>"
+    	    	   +"<html>";
+    		}
+    		else
+    		{
+    			id="<html>"
+    	    	  +"<body>"
+    	    	  +"<font color=gray>-</font>"
+    	    	  +"</body>"
+    	    	  +"<html>";
+    		}
     		String[] data={
-    			String.valueOf(vo.getMno()),
+    			String.valueOf(vo.getNo()),
+    			id,
     			vo.getTitle(),
-    			vo.getActor(),
-    			vo.getRegdate(),
-    			vo.getGenre()
+    			vo.getSinger(),
+    			vo.getAlbum()
     		};
     		
     		model.addRow(data);
@@ -123,7 +152,13 @@ implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		for(int i=0;i<btns.length;i++)
+		{
+			if(e.getSource()==btns[i])
+			{
+				print(i+1);
+			}
+		}
 	}
 
 }

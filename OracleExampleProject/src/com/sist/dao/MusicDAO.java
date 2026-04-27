@@ -30,24 +30,25 @@ public class MusicDAO {
 			if(conn!=null) conn.close();
 		}catch(Exception ex) {}
 	}
-	public List<MusicVO> musicListData(int page){
+	public List<MusicVO> musicListData(int cno){
 		List<MusicVO> list=new ArrayList<MusicVO>();
 		try {
 			getConnection();
-			String sql="SELECT no, title, singer, album, state "
+			String sql="SELECT no, state, idcrement, title, singer, album "
 					+"FROM genie_music "
-					+"OFFSET ? ROWS FETCH NEXT 20 ROWS ONLY";
+					+"WHERE cno=? "
+					+"ORDER BY no ASC";
 			ps=conn.prepareStatement(sql);
-			int start=(page*20)-20;
-			ps.setInt(1, start);
+			ps.setInt(1, cno);
 			ResultSet rs=ps.executeQuery();
 			while(rs.next()) {
 				MusicVO vo=new MusicVO();
 				vo.setNo(rs.getInt(1));
-				vo.setTitle(rs.getString(2));
-				vo.setSinger(rs.getString(3));
-				vo.setAlbum(rs.getString(4));
-				vo.setState(rs.getString(5));
+				vo.setState(rs.getString(2));
+				vo.setIdcrement(rs.getInt(3));
+				vo.setTitle(rs.getString(4));
+				vo.setSinger(rs.getString(5));
+				vo.setAlbum(rs.getString(6));
 				list.add(vo);
 			}
 			rs.close();
