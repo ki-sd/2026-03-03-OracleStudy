@@ -1,9 +1,13 @@
 package com.sist.user;
 import java.util.*;
+import java.util.List;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-public class JoinPanel extends JPanel implements ActionListener{
+import com.sist.dao.*;
+import com.sist.vo.*;
+public class JoinPanel extends JPanel implements ActionListener,MouseListener{
     JLabel tLa,iLa,pLa1,nLa,sLa,pLa,aLa1,aLa2,telLa,cLa;
     JTextField idtf,nametf,posttf,addrtf1,addrtf2,teltf;
     JTextArea cta;
@@ -14,6 +18,8 @@ public class JoinPanel extends JPanel implements ActionListener{
     ControlPanel cp;
     IdCheckFrame idf=new IdCheckFrame();
 	PostFindFrame post=new PostFindFrame();
+	// 데이터베이스 연동
+	MemberDAO dao=new MemberDAO();
     public JoinPanel(ControlPanel cp)
     {
     	this.cp=cp;
@@ -90,6 +96,7 @@ public class JoinPanel extends JPanel implements ActionListener{
     	add(aLa1);
     	
     	addrtf1=new JTextField();
+    	addrtf1.setEnabled(false);
     	addrtf1.setBounds(265, 255, 450, 30);
     	add(addrtf1);
     	
@@ -137,6 +144,16 @@ public class JoinPanel extends JPanel implements ActionListener{
     	b2.addActionListener(this);
     	b3.addActionListener(this);
     	b4.addActionListener(this);
+    	
+    	// 우편번호, 아이디 중복
+    	post.b1.addActionListener(this);
+    	post.tf.addActionListener(this);
+    	post.b2.addActionListener(this);
+    	post.table.addMouseListener(this);
+    	//CRUD
+    	//id 중복체크
+    	idf.b1.addActionListener(this); //중복체크
+    	idf.b2.addActionListener(this); //확인
     }
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -148,12 +165,154 @@ public class JoinPanel extends JPanel implements ActionListener{
 			idf.tf.setText("");
 			idf.tf.requestFocus();
 			idf.setVisible(true);
+			idf.la3.setText("");
+			idf.b2.setVisible(false);
 		}
 		else if(e.getSource()==b2) {
+			for(int i=post.model.getRowCount()-1;i>=0;i--) {
+				post.model.removeRow(i);
+			}
+			post.tf.setText("");
 			post.setVisible(true);
 		}
-		else if(e.getSource()==b3) {
+		// 우편번호 검색
+		else if(e.getSource()==post.b1||e.getSource()==post.tf) {
+			// Like => Regexp_Like => index 적용이 안될수있다
+			// 1. %가 앞에 있으면 안됨
+			// 2. 제어 => 함수
+			// 입력값 받기
+			String dong=post.tf.getText();
+			if(dong.trim().length()<1) {
+				post.tf.setText(" ");
+				post.tf.requestFocus();
+				return;
+			}
+			int count=dao.postFindCount(dong);
+			if(count==0) { //검색결과 없음
+				JOptionPane.showMessageDialog(this, "검색 결과가 없습니다");
+				post.tf.setText(" ");
+				post.tf.requestFocus();
+			}else {
+				List<ZipcodeVO> list=dao.postFind(dong);
+				for(ZipcodeVO vo:list) {
+					String[] data= {
+						vo.getZipcode(),
+						vo.getAddress()
+					};
+				post.model.addRow(data);
+				}
+			}
 			
 		}
+		else if(e.getSource()==idf.b1) {
+			// 입력값 읽기
+			String id=idf.tf.getText();
+			if(id.trim().length()<1) {
+				idf.tf.setText("");
+				idf.tf.requestFocus();
+				idf.la3.setText("아이디를 입력해주세요");
+				return;
+			}
+			// 데이터베이스 연동
+			int count=dao.memberIdCheck(id);
+			if(count==0) {
+				idf.la3.setText("사용 가능한 아이디입니다");
+				idf.b2.setVisible(true);
+				
+			}else {
+				idf.la3.setText("이미 사용중인 아이디입니다");
+				idf.tf.setText("");
+				idf.tf.requestFocus();
+			}
+			
+		}
+		else if(e.getSource()==idf.b2) {
+			String id=idf.tf.getText();
+			idtf.setText(id);
+			idf.setVisible(false);
+		}
+		else if(e.getSource()==post.b2) {
+			post.setVisible(false);
+		}
+		// 회원가입
+		else if(e.getSource()==b3) {
+			String id=idtf.getText();
+			String pwd=String.valueOf(pf.getPassword());
+			String name=nametf.getText();
+			String sex="남자";
+			if(rb1.isSelected())
+				sex="남자";
+			else
+				sex="여자";
+			String post=posttf.getText();
+			String addr1=addrtf1.getText();
+			String addr2=addrtf2.getText();
+			String phone=teltf.getText();
+			String content=cta.getText();
+			
+			MemberVO vo=new MemberVO();
+			vo.setId(id);
+			vo.setPwd(pwd);
+			vo.setName(name);
+			vo.setSex(sex);
+			vo.setPost(post);
+			vo.setAddr1(addr1);
+			vo.setAddr2(addr2);
+			vo.setPhone(phone);
+			vo.setContent(content);
+			
+			// db연동
+			int check=dao.memberJoin(vo);
+			// executeUpdate()
+			// => 변경갯수 리턴(1~ => 추가/변경/삭제)
+			//              0 => 변경된 데이터 없음 (변경실패)
+			if(check>0) {
+				JOptionPane.showMessageDialog(this, "🎉 회원가입을 축하합니다 🎉");
+				cp.card.show(cp, "HOME");
+			}else {
+				JOptionPane.showMessageDialog(this, "회원 가입에 실패했습니다\n다시 시도해주세요");
+			}
+		}
+		// 취소
+		else if(e.getSource()==b4) {
+			cp.card.show(cp, "HOME");
+		}
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource()==post.table) {
+			if(e.getClickCount()==2) {
+				int row=post.table.getSelectedRow();
+				// 값 첨부
+				String zip=post.model.getValueAt(row, 0).toString();
+				String addr=post.model.getValueAt(row, 1).toString();
+				
+				posttf.setText(zip);
+				addrtf1.setText(addr);
+				
+				post.setVisible(false);
+			}
+		}
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

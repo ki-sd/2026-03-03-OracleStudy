@@ -78,14 +78,16 @@ implements ActionListener
          box.addItem(4);
          box.addItem(5);
          b1=new JButton("구매");
+         b1.setEnabled(false);
          b2=new JButton("목록");
-         b2.addActionListener(this);
         	 
         	 
          JPanel p=new JPanel();
          p.add(box);p.add(b1);p.add(b2);
          p.setBounds(330, 200, 435, 35);
          add(p);
+         
+         b2.addActionListener(this);
     }
     public void print(int type,int gno)
     {
@@ -106,6 +108,8 @@ implements ActionListener
     	}catch(Exception ex) {
     		ex.printStackTrace();
     	}
+    	
+    	b1.setEnabled(UserMainFrame.bLogin);
     }
 	@Override
 	public void actionPerformed(ActionEvent e) {
