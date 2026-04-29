@@ -10,6 +10,7 @@ import javax.swing.*;
 
 import com.sist.commons.*;
 import com.sist.dao.GoodsDAO;
+import com.sist.vo.BuyVO;
 import com.sist.vo.GoodsVO;
 
 public class GoodsDetailForm extends JPanel
@@ -35,7 +36,7 @@ implements ActionListener
          add(poster);
         	 
          nameLa=new JLabel("상품명");
-         nameLa.setBackground(Color.gray);
+         nameLa.setBackground(Color.lightGray);
          nameLa.setOpaque(true);
          name=new JLabel();
          nameLa.setBounds(330, 20, 80, 30);
@@ -47,7 +48,7 @@ implements ActionListener
          add(sub);
          priceLa=new JLabel("가격");
          price=new JLabel();
-         priceLa.setBackground(Color.gray);
+         priceLa.setBackground(Color.lightGray);
          priceLa.setOpaque(true);
         	 
          priceLa.setBounds(330, 90, 80, 30);
@@ -55,7 +56,7 @@ implements ActionListener
          add(priceLa);add(price);
         	 
          discountLa=new JLabel("할인");
-         discountLa.setBackground(Color.gray);
+         discountLa.setBackground(Color.lightGray);
          discountLa.setOpaque(true);
          discount=new JLabel();
         	 
@@ -64,7 +65,7 @@ implements ActionListener
          add(discountLa);add(discount);
         	 
          deliveryLa=new JLabel("배송");
-         deliveryLa.setBackground(Color.gray);
+         deliveryLa.setBackground(Color.lightGray);
          deliveryLa.setOpaque(true);
          delivery=new JLabel();
         	 
@@ -87,6 +88,7 @@ implements ActionListener
          p.setBounds(330, 200, 435, 35);
          add(p);
          
+         b1.addActionListener(this);
          b2.addActionListener(this);
     }
     public void print(int type,int gno)
@@ -116,6 +118,26 @@ implements ActionListener
 		// TODO Auto-generated method stub
 		if(e.getSource()==b2) {
 			cp.card.show(cp, "HOME");
+		}
+		else if(e.getSource()==b1) {
+			BuyVO vo=new BuyVO();
+			vo.setGno(gno);
+			vo.setType(type);
+			// id, 수량
+			vo.setId(cp.myId);
+			int account=(int)box.getSelectedItem();
+			vo.setAccount(account);
+			String p=price.getText();
+			p=p.replaceAll("[^0-9]", "");
+			/*
+			 *    [^0-9] => 숫자를 제외
+			 *    ^[0-9] => 숫자로 시작
+			 */
+			vo.setPrice(Integer.parseInt(p));
+			dao.goodsBuyData(vo);
+			JOptionPane.showMessageDialog(this, "구매되었습니다");
+			cp.card.show(cp, "MYPAGE");
+			cp.mf.print();
 		}
 	}
 }

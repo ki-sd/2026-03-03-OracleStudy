@@ -29,10 +29,13 @@ public class UserMainFrame extends JFrame implements ActionListener{
 		mp.b2.addActionListener(this);
 		mp.b1.addActionListener(this);
 		mp.b6.addActionListener(this);
+		mp.b4.addActionListener(this);
+		mp.b5.addActionListener(this);
 		
 		// login
 		login.b1.addActionListener(this); //로그인
 		login.b2.addActionListener(this); //취소
+		
 	}
 	public static void main(String[] args) {
 		try {
@@ -85,8 +88,11 @@ public class UserMainFrame extends JFrame implements ActionListener{
 				UserMainFrame.bLogin=true;
 				UserMainFrame.isAdmin=vo.getIsAdmin().charAt(0);
 				login.setVisible(false);
-			
+				cp.myId=id;
 				mp.init();
+				if(vo.getIsAdmin().equals("y")) {
+					cp.card.show(cp, "ADMIN");
+				}
 			}
 		}
 		else if(e.getSource()==login.b2) {
@@ -98,6 +104,10 @@ public class UserMainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, "종료합니다");
 			dispose();
 			System.exit(0);
+		}
+		else if(e.getSource()==mp.b4) {
+			cp.card.show(cp, "MYPAGE");
+			cp.mf.print();
 		}
 	}
 }

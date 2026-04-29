@@ -2,6 +2,7 @@ package com.sist.dao;
 import java.sql.*;
 import java.util.*;
 
+import com.sist.vo.BuyVO;
 import com.sist.vo.GoodsVO;
 public class GoodsDAO {
 	// 전체적으로 사용
@@ -124,4 +125,76 @@ public class GoodsDAO {
 		}
 		return vo;
 	}
+	// 구매
+	public void goodsBuyData(BuyVO vo) {
+		try {
+			getConnection();
+			String sql="INSERT INTO buy VALUES("
+					+ "buy_no_seq.nextval,?,?,?,?,?,SYSDATE)";
+			ps=conn.prepareStatement(sql);
+			ps.setString(1, vo.getId());
+			ps.setInt(2, vo.getType());
+			ps.setInt(3, vo.getGno());
+			ps.setInt(4, vo.getAccount());
+			ps.setInt(5, vo.getPrice());
+			ps.executeUpdate();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			disConnection();
+		}
+	}
+	// JOIN
+	/*
+	 *     고객   <구매>   도서
+	 *           | id, 전화번호
+	 *     
+	 *     = INNER (EQUI_JOIN) => INTERSECT
+	 *     = OUTER => LEFT/RIGHT => INTERSECT + MINUS
+	 */
+	public List<BuyVO> buyListData(String id){
+		List<BuyVO> list=new ArrayList<BuyVO>();
+		try {
+			getConnection();
+			String sql="SELECT b.no,goods_poster,goods_name,account,"
+					+ "TO_CHAR(regdate,'YYYY-MM-DD'),price "
+					+ "FROM buy b JOIN goods_all g "
+					+ "ON b.gno=g.no "
+					+ "AND b.id=? "
+					+ "ORDER BY regdate DESC";
+			ps=conn.prepareStatement(sql);
+			ps.setString(1, id);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()) {
+				BuyVO vo=new BuyVO();
+				vo.setNo(rs.getInt(1));
+				vo.getGvo().setGoods_poster(rs.getString(2));
+				vo.getGvo().setGoods_name(rs.getString(3));
+				vo.setAccount(rs.getInt(4));
+				vo.setDbday(rs.getString(5));
+				vo.setPrice(rs.getInt(6));
+				list.add(vo);
+			}
+			rs.close();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			disConnection();
+		}
+		return list;
+	}
+	public void buyDelete(int no) {
+		try {
+			getConnection();
+			String sql="DELETE FROM buy "
+					+ "WHERE no="+no;
+			ps=conn.prepareStatement(sql);
+			ps.executeUpdate();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally {
+			disConnection();
+		}
+	}
+	
 }
